@@ -148,6 +148,8 @@ Once the offline values matched, the remaining failures came from protocol shape
 - Replayed the methodology against rotated builds: all high-risk checks continued to pass, showing that the implementation reproduced browser semantics instead of hard-coding one obfuscated build.
 - Cold-start execution of the full research chain took approximately 4.5 seconds.
 
+![result](result.jpg)
+
 ## Scope and Ethics
 
 - This article documents research methodology only. It contains no runnable bypass, fingerprint-collection utility, live-session data, or material intended for direct access to the target service.
