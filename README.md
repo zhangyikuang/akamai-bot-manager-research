@@ -17,7 +17,7 @@
 
 处理掉无限 debugger（特征是一个 eval 里的埋点变量名）之后开始跟栈。我最初顺着一段核心脚本往 worker message 方向追，花了半天分析它的消息分发函数：
 
-![走错的 worker message 链路](images/01-worker-message-check.png)
+![走错的 worker message 链路](01-worker-message-check.png)
 
 后来发现这条链根本到不了目标请求——它是页面自己的埋点系统。纠正方法很朴素：**回到目标 POST 的第一个栈帧，从那里往下走**。
 
