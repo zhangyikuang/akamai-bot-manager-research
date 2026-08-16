@@ -1,6 +1,6 @@
 # Reverse Engineering Akamai's Two-Stage Challenge: A Two-Week Investigation
 
-**English** | [简体中文](公开版-Akamai两阶段挑战逆向研究.md)
+**English** | [简体中文](README.md)
 
 <!-- TRANSLATION-SOURCE: 公开版-Akamai两阶段挑战逆向研究.md -->
 <!-- TRANSLATION-SYNC: 2026-08-16 -->
