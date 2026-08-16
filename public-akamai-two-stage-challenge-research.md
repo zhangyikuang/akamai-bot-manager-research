@@ -23,15 +23,15 @@ The problem could therefore be reduced to one objective: **run those scripts loc
 
 After neutralizing an infinite `debugger` loop—identified through a telemetry variable inside `eval`—I followed a core script toward its worker-message path and spent half a day analyzing the dispatcher:
 
-![The worker-message path that turned out to be unrelated](images/01-worker-message-check.png)
+![The worker-message path that turned out to be unrelated](01-worker-message-check.png)
 
 That path never reached the target request. It belonged to the site's own telemetry system. The correction was simple: **start at the first stack frame of the target POST and trace backward from there**.
 
-![The first stack frame of the target request](images/04-first-stack-ehwb.png)
+![The first stack frame of the target request](04-first-stack-ehwb.png)
 
 I moved upward through the stack and inspected local variables at every frame. The plaintext assembly point eventually exposed an 82-element key/value array in Scope—the first-stage `sensor_data` payload:
 
-![Tracing into the plaintext assembly point](images/08-stack-step2.png)
+![Tracing into the plaintext assembly point](08-stack-step2.png)
 
 This lesson held throughout the project: when reversing heavily obfuscated code, choosing the right starting point often matters more than raw analysis speed.
 
@@ -79,15 +79,15 @@ A later minimal-chain experiment established an important distinction: **the ini
 
 Function names were not a reliable way into the long-report code. The dependable entry point was the request itself: intercept `{"body":"..."}` at XHR `send`, confirm the URL and payload, and enter the first challenge-script frame in the call stack.
 
-![Intercepting the long-report body at XHR send](images/10-chal2-stack-1.png)
+![Intercepting the long-report body at XHR send](10-chal2-stack-1.png)
 
 Inside the obfuscated `cJJ` frame, the local variable `gHJ` was already the outer plaintext object before encoding. This screenshot comes from the second report, so `ver`, `ke`, and `me` are visible. The first report follows the same assembly and encoding path, but uses `s="f"` and contains no `me`.
 
-![Locating the plaintext gHJ object in the cJJ frame](images/11-chal2-stack-2.png)
+![Locating the plaintext gHJ object in the cJJ frame](11-chal2-stack-2.png)
 
 Following the call into `wIJ` exposed `SzJ`, the assembly point where collected signals enter the outer payload. This is a useful location for capturing browser ground truth and running field-by-field diffs, but it is not the original source of each signal. Individual meanings still have to be traced back to their generator functions.
 
-![Locating the SzJ signal assembly object inside wIJ](images/12-chal2-stack-3.png)
+![Locating the SzJ signal assembly object inside wIJ](12-chal2-stack-3.png)
 
 Two mechanisms were particularly interesting:
 
@@ -113,8 +113,6 @@ Three cases stand out:
 - **The missing 23 signals, from 97 to 120.** My first guess was an iframe lifecycle issue. It was wrong. The collector ran in a dynamically created SharedWorker sub-realm; one missing constructor caused realm creation to throw, and the script swallowed the exception. The fix was a complete child-realm lifecycle, not an iframe patch.
 - **A field returning `-2`.** Node's VM exposed `SharedArrayBuffer` while `crossOriginIsolated` was false, a combination that does not occur in the corresponding browser context. The built-in had to be removed at VM bootstrap; a normal environment-layer override could not hide it correctly.
 - **A field containing `undef#`.** The source was a read of a DOM node's `firstChild`. A browser's prototype getter returns `null` when there is no child; the emulation returned `undefined` because the getter did not exist. Adding four prototype getters eliminated the non-session discrepancies: 113 of 120 signals matched the browser byte for byte, while the remaining seven were expected session noise such as clocks and memory values.
-
-![The field-by-field discrepancy list during signal alignment](images/13-remaining-diff.png)
 
 This work also produced a broader lesson: **the observation tool can become part of the experiment**. An early prototype-pollution probe made several fields appear absent. Replacing it with source injection plus a `Function.prototype.toString` guard removed the artifacts. From then on, any stubborn mismatch was first treated as a possible measurement error and only then as an environment defect.
 
