@@ -155,3 +155,20 @@ Once the offline values matched, the remaining failures came from protocol shape
 - This article documents research methodology only. It contains no runnable bypass, fingerprint-collection utility, live-session data, or material intended for direct access to the target service.
 - The work was conducted on my own devices and accounts against normal business endpoints. It did not involve load testing or bulk collection.
 - This material is for security research and education. Follow the target site's terms of service and all applicable laws.
+
+
+My other reverse-engineering research and engineering work includes:
+
+* RuiShu 5 / RuiShu 6
+* JSL / Jiasule anti-bot challenges
+* Alibaba Cloud WAF
+* NetEase behavioral CAPTCHA
+* JD H5ST request signing
+
+I plan to gradually publish more of this research over time.
+
+My work focuses on analyzing browser-side protocols and verification mechanisms rather than relying on browser automation frameworks such as Playwright or Selenium. Where practical, I reproduce the required protocol behavior at the request level, enabling lighter-weight and more scalable data access.
+
+If you have commercial needs involving web anti-bot systems, JavaScript or web protocol reverse engineering, or request-level data extraction, feel free to contact me:
+
+Email: mosike158@gmail.com
